@@ -82,3 +82,16 @@ until they solve at least one challenge.
 - User can switch to challenge-only mode.
 - Categories are selectable and external API can be configured.
 - App supports ad-based free mode and optional donations.
+
+## Current implementation progress
+
+- Added a reusable blocking-target core in `code_gate/blocking_targets.py` for:
+  - Android package blocking checks (`com.google.android.youtube`, `com.instagram.android`)
+  - Browser host/URL blocking checks for YouTube and Instagram domains/subdomains
+- Added focused tests in `tests/test_blocking_targets.py`
+
+Run tests:
+
+```bash
+python -m unittest discover -s tests -p "test_*.py"
+```
