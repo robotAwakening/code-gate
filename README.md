@@ -95,3 +95,28 @@ Run tests:
 ```bash
 python -m unittest discover -s tests -p "test_*.py"
 ```
+
+## Run and execute locally
+
+This repository currently includes a Python CLI prototype for the blocking gate logic.
+
+From `/home/runner/work/code-gate/code-gate`:
+
+```bash
+# show current gate status
+python -m code_gate.cli status
+
+# check if an app package is blocked
+python -m code_gate.cli check-app com.google.android.youtube
+
+# check if a URL/host is blocked
+python -m code_gate.cli check-url https://www.instagram.com/reel/example
+
+# solve one challenge (unlocks after one correct answer: 2 + 2 = 4)
+python -m code_gate.cli solve
+
+# reset local state
+python -m code_gate.cli reset
+```
+
+State is persisted by default at `~/.code_gate/state.json`, so unlock progress survives restarts.
