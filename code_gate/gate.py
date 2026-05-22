@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
+from datetime import date
 from pathlib import Path
 from typing import Literal
 
@@ -15,6 +16,10 @@ class GateState:
     required_challenges: int = 1
     solved_challenges: int = 0
     unlock_attempts_today: int = 0
+    # Streak tracking
+    daily_streak: int = 0
+    last_solved_date: str = ""  # ISO-8601 date string "YYYY-MM-DD", empty = never
+    total_challenges_solved: int = 0
 
     @property
     def is_unlocked(self) -> bool:
@@ -33,7 +38,27 @@ class GateState:
         self.unlock_attempts_today += 1
         if solved:
             self.solved_challenges += 1
+            self.total_challenges_solved += 1
+            self._update_streak()
         return self.is_unlocked
+
+    def _update_streak(self) -> None:
+        today = date.today().isoformat()
+        if not self.last_solved_date:
+            self.daily_streak = 1
+        else:
+            last = date.fromisoformat(self.last_solved_date)
+            today_date = date.today()
+            delta = (today_date - last).days
+            if delta == 0:
+                # Already counted today – no change to streak
+                pass
+            elif delta == 1:
+                self.daily_streak += 1
+            else:
+                # Streak broken
+                self.daily_streak = 1
+        self.last_solved_date = today
 
 
 def load_state(path: str | Path) -> GateState:
@@ -46,6 +71,9 @@ def load_state(path: str | Path) -> GateState:
         required_challenges=int(data.get("required_challenges", 1)),
         solved_challenges=int(data.get("solved_challenges", 0)),
         unlock_attempts_today=int(data.get("unlock_attempts_today", 0)),
+        daily_streak=int(data.get("daily_streak", 0)),
+        last_solved_date=str(data.get("last_solved_date", "")),
+        total_challenges_solved=int(data.get("total_challenges_solved", 0)),
     )
 
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f0f13" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Code Gate" />
+  <meta name="description" content="Earn screen time by solving challenges." />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/styles.css" />
+  <title>Code Gate</title>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Top bar ──────────────────────────────────────── -->
+    <header class="top-bar">
+      <span class="logo">⚡ Code Gate</span>
+      <div class="stats-row" id="statsRow" hidden>
+        <span class="badge badge--streak" id="streakBadge" title="Day streak">🔥 <span id="streakCount">0</span></span>
+        <span class="badge badge--solved" id="solvedBadge" title="Total solved">✅ <span id="totalCount">0</span></span>
+      </div>
+    </header>
+
+    <!-- ── Screen: Loading ──────────────────────────────── -->
+    <section class="screen" id="screenLoading">
+      <div class="spinner"></div>
+      <p class="hint">Loading…</p>
+    </section>
+
+    <!-- ── Screen: Gate (locked) ────────────────────────── -->
+    <section class="screen" id="screenGate" hidden>
+      <div class="gate-icon">🔒</div>
+      <h1 class="gate-title">Gate is Active</h1>
+      <p class="gate-subtitle">YouTube &amp; Instagram are blocked until you solve a challenge.</p>
+
+      <div class="difficulty-pill" id="difficultyPill"></div>
+
+      <button class="btn btn--primary" id="btnStartChallenge">Solve a Challenge</button>
+
+      <div class="attempts-hint" id="attemptsHint"></div>
+    </section>
+
+    <!-- ── Screen: Challenge ─────────────────────────────── -->
+    <section class="screen" id="screenChallenge" hidden>
+      <div class="challenge-header">
+        <span class="category-badge" id="categoryBadge"></span>
+        <span class="difficulty-dots" id="difficultyDots"></span>
+      </div>
+
+      <h2 class="challenge-question" id="challengeQuestion"></h2>
+
+      <!-- Multiple-choice options -->
+      <div class="options-grid" id="optionsGrid" hidden></div>
+
+      <!-- Free-text fallback -->
+      <div class="answer-group" id="answerGroup" hidden>
+        <input
+          class="answer-input"
+          id="answerInput"
+          type="text"
+          placeholder="Your answer…"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
+        <button class="btn btn--primary" id="btnSubmitAnswer">Submit</button>
+      </div>
+
+      <button class="btn btn--ghost" id="btnBackToGate">← Back</button>
+    </section>
+
+    <!-- ── Screen: Result ───────────────────────────────── -->
+    <section class="screen" id="screenResult" hidden>
+      <div class="result-icon" id="resultIcon"></div>
+      <h2 class="result-title" id="resultTitle"></h2>
+      <p class="result-body" id="resultBody"></p>
+      <button class="btn btn--primary" id="btnAfterResult"></button>
+      <button class="btn btn--ghost" id="btnTryAnother" hidden>Try Another Challenge</button>
+    </section>
+
+    <!-- ── Screen: Unlocked ──────────────────────────────── -->
+    <section class="screen" id="screenUnlocked" hidden>
+      <div class="unlock-icon">🎉</div>
+      <h1 class="unlock-title">Gate Unlocked!</h1>
+      <p class="unlock-body">Great work. You can now use YouTube and Instagram for this session.</p>
+
+      <div class="streak-celebrate" id="streakCelebrate" hidden>
+        <span>🔥</span> <strong id="streakCelebrateCount">0</strong>-day streak!
+      </div>
+
+      <div class="unlock-actions">
+        <button class="btn btn--secondary" id="btnPracticeMode">Practice Mode</button>
+        <button class="btn btn--ghost btn--small" id="btnReset">Reset Gate</button>
+      </div>
+    </section>
+
+  </div><!-- /#app -->
+
+  <script src="/app.js"></script>
+</body>
+</html>
