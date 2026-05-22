@@ -37,7 +37,7 @@ until they solve at least one challenge.
   - Daily streak
   - Time spent on blocked apps/sites
 - Reward lower screentime and more solved challenges.
-- Allow “challenge-only mode” (practice without unlocking intent).
+- Allow "challenge-only mode" (practice without unlocking intent).
 
 ### 4) Problem sources and categories
 - Built-in categories:
@@ -89,6 +89,10 @@ until they solve at least one challenge.
   - Android package blocking checks (`com.google.android.youtube`, `com.instagram.android`)
   - Browser host/URL blocking checks for YouTube and Instagram domains/subdomains
 - Added focused tests in `tests/test_blocking_targets.py`
+- Added a rich challenge engine in `code_gate/challenges.py` with 21 built-in challenges across three categories (Math, Coding, Logic) and three difficulty tiers (Easy → Medium → Hard). Difficulty automatically escalates with the number of unlock attempts made today.
+- Added daily streak tracking to `GateState` (persisted in `~/.code_gate/state.json`).
+- Added a PWA (Progressive Web App) frontend in `app/` — mobile-first dark-theme UI with multiple-choice tap targets, difficulty badges, and streak celebration.
+- Added a built-in HTTP server in `code_gate/server.py` that serves the PWA and exposes a JSON API — no external dependencies required.
 
 Run tests:
 
@@ -96,11 +100,126 @@ Run tests:
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-## Run and execute locally
+---
 
-This repository currently includes a Python CLI prototype for the blocking gate logic.
+## 📱 Run on Your Phone (step-by-step)
 
-From `/home/runner/work/code-gate/code-gate`:
+The app is a **PWA (Progressive Web App)** served by a Python HTTP server.
+Both your computer and phone must be on the **same Wi-Fi network**.
+
+### Prerequisites
+
+| Requirement | Notes |
+|---|---|
+| Python 3.9+ | Check: `python3 --version` |
+| Git | To clone the repo |
+| Any modern browser on phone | Chrome (Android/iOS) or Safari (iOS) |
+
+No app-store install required. The browser-based PWA works on **both Android and iPhone**.
+
+---
+
+### Step 1 — Clone and enter the repo
+
+```bash
+git clone https://github.com/robotAwakening/code-gate.git
+cd code-gate
+```
+
+### Step 2 — Start the server
+
+```bash
+python -m code_gate.server
+```
+
+You will see output like:
+
+```
+code-gate server running on port 5000
+  Local:   http://localhost:5000
+  Network: http://192.168.1.42:5000
+Open either URL in your phone's browser (same Wi-Fi network required for Network URL).
+Press Ctrl+C to stop.
+```
+
+> **Note the Network URL** — that is the address you will type into your phone.
+
+To use a different port (e.g. if 5000 is taken):
+
+```bash
+python -m code_gate.server --port 8080
+```
+
+### Step 3 — Find your computer's local IP (if the server didn't print it)
+
+**macOS / Linux:**
+```bash
+ipconfig getifaddr en0   # macOS Wi-Fi
+# or
+ip route get 8.8.8.8 | awk '{print $7; exit}'  # Linux
+```
+
+**Windows (Command Prompt):**
+```
+ipconfig
+```
+Look for `IPv4 Address` under your active Wi-Fi adapter (e.g. `192.168.1.42`).
+
+### Step 4 — Open on your phone
+
+1. Make sure your phone is connected to the **same Wi-Fi** as your computer.
+2. Open **Chrome** (Android) or **Safari** (iOS).
+3. Type the Network URL from Step 2 into the address bar, e.g.:
+   ```
+   http://192.168.1.42:5000
+   ```
+4. The Code Gate app will load. You should see the 🔒 gate screen.
+
+### Step 5 — Add to Home Screen (optional, but recommended for the full app experience)
+
+**Android (Chrome):**
+1. Tap the three-dot menu (⋮) in Chrome.
+2. Tap **Add to Home screen**.
+3. Tap **Add**.
+
+**iPhone (Safari):**
+1. Tap the Share button (□↑) at the bottom.
+2. Scroll down and tap **Add to Home Screen**.
+3. Tap **Add**.
+
+Once added, the app opens full-screen without browser chrome, just like a native app.
+
+---
+
+### API endpoints (for developers)
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `GET /api/status` | GET | Current gate state (locked/unlocked, streak, etc.) |
+| `GET /api/challenge` | GET | Fetch a challenge at the current difficulty |
+| `POST /api/solve` | POST | Submit an answer `{"challenge_id": N, "answer": "..."}` |
+| `POST /api/reset` | POST | Reset today's state |
+| `GET /` | GET | Serves the PWA shell |
+
+---
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| Phone shows "This site can't be reached" | Check phone and computer are on the **same Wi-Fi** network. Confirm server is running. |
+| `Address already in use` error | Use `--port 8080` (or another free port). |
+| Page loads but API calls fail | Check your firewall allows inbound connections on port 5000. On macOS: System Settings → Firewall. On Windows: allow Python through Windows Defender Firewall. |
+| iOS Safari shows blank screen | Hard-reload: hold the refresh button → tap "Reload Without Content Blockers". |
+| Server prints `127.0.0.1` for Network URL | Your machine may have no active Wi-Fi. Connect to Wi-Fi and restart the server. |
+
+---
+
+## Run and execute locally (CLI prototype)
+
+This repository also includes a command-line prototype for the blocking-gate logic.
+
+From the repo root:
 
 ```bash
 # show current gate status
